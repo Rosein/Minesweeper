@@ -35,3 +35,31 @@ TEST_F(BoardTest, checkIfComputerFilledTheBoardWith16procBombs)
                 i++;
     EXPECT_EQ(19, i);
 }
+
+TEST_F(BoardTest, setVisibleFiedExpectGetTheSame)
+{
+    board.setVisibleField(1,1,5);
+    EXPECT_EQ(5, board.getVisibleFieldInfo(1,1));
+}
+
+TEST_F(BoardTest, displayMultipleFieldsDisplaysThem)
+{
+    auto size = board.getFieldSize();
+    for(int j=1; j<=size.first; j++)
+        for(int k=1; k<=size.second; k++)
+        {
+            if(board.getFieldInfo(j,k) == 0)
+            {
+                board.displayMultipleFields(j, k);
+                EXPECT_GT(10, board.getVisibleFieldInfo(j+1, k+1));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j+1, k-1));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j-1, k+1));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j-1, k-1));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j+1, k  ));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j-1, k  ));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j  , k+1));
+                EXPECT_GT(10, board.getVisibleFieldInfo(j  , k-1));
+            }
+
+        }
+}

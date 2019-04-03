@@ -10,14 +10,16 @@ class Board
     int _x;
     std::vector<std::vector<int>> _board;
     std::vector<std::vector<int>> _visibleBoard;
-    int checkSurrounding(int x, int y);
+    int numberFields(int x, int y);
     void fillField();
+    void showSurroundingOfEmptyField(std::vector<std::pair<int, int>>& emptyFields);
+    void findWholeSurroundingOfEmpty(int x, int y, std::vector<std::pair<int, int>>& emptyFields);
 public:
     Board(int width, int height);
+    std::pair <int, int> getFieldSize();
     int getFieldInfo(int x, int y);
     int getVisibleFieldInfo(int x, int y);
     void setVisibleField(int x, int y, int val);
-    std::pair <int, int> getFieldSize();
-    void shoot(int x, int y);
+    void displayMultipleFields(int x, int y);
 };
     
