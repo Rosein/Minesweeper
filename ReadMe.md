@@ -15,7 +15,7 @@ Game was created using TDD development process.
 - [x] when clicked on empty field - all attacheched empty fields and surrounding fields with numbers should appear
 - [x] when clicked on bomb - game is over and lost
 - [x] when all fields apart of bombs are displayed - game is over and won
-- [ ] display amount of bombs left to find
+- [x] display amount of bombs left to find
 - [ ] add time counter
 - [ ] add background
 

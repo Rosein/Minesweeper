@@ -34,11 +34,16 @@ std::pair <int, int>  Board::getFieldSize()
     return std::make_pair(_x, _y);
 }
 
+int Board::getNoOfBombs()
+{
+    return _bombs;
+}
+
 void Board::fillField()
 {
-    int bombsAmount = _x*_y *0.16;
+    _bombs = _x*_y *0.16;
     srand(time(0));
-    for(int i = 0; i < bombsAmount; i++)
+    for(int i = 0; i < _bombs; i++)
     {
         int x = (rand() %_x)+1;
         int y = (rand() %_y)+1;

@@ -5,8 +5,9 @@ BoardGui::BoardGui(Board& board)
 {
     int tileSize = 50;
     auto fSize = board.getFieldSize();
-    sf::RenderWindow window( sf::VideoMode( (fSize.first)*tileSize, (fSize.second+3)*tileSize), "Minsweeper" );
+    sf::RenderWindow window( sf::VideoMode( (fSize.first)*tileSize, (fSize.second+3)*tileSize), "Minesweeper" );
     bool game = true;
+    int bombs = board.getNoOfBombs();
 
 
     sf::Texture background;
@@ -17,7 +18,7 @@ BoardGui::BoardGui(Board& board)
     sf::Sprite s(t);
     sf::Event e;
 
-    displayField(window, fSize, board, tileSize, s);
+    displayField(window, fSize, board, tileSize, s, bombs);
     while( window.isOpen() && game )
     {
         while(window.pollEvent(e))
@@ -40,11 +41,17 @@ BoardGui::BoardGui(Board& board)
                 if (e.mouseButton.button == sf::Mouse::Right) 
                 {
                     if(board.getVisibleFieldInfo(x, y) == 10)
+                    {
                         board.setVisibleField(x, y, 11);               
+                        bombs--;
+                    }
                     else if(board.getVisibleFieldInfo(x, y) == 11)
+                    {
                         board.setVisibleField(x, y, 10);
+                        bombs++;
+                    }
                 }
-            displayField(window, fSize, board, tileSize, s);       
+            displayField(window, fSize, board, tileSize, s, bombs);       
             if(board.getVisibleFieldInfo(x, y) == 9)
                 alert("You lost!", game);
             else if(board.checkIfWon())
@@ -55,7 +62,7 @@ BoardGui::BoardGui(Board& board)
 
 }
 
-void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s)
+void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s, int bombs)
 {
     window.clear(sf::Color(192, 192, 192, 255));
     for (int i=1; i<=fSize.first; i++)
@@ -65,6 +72,7 @@ void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize,
             s.setPosition((i-1)*tileSize, (j+2)*tileSize);
             window.draw(s);
         }
+    displayBombsCounter(window, bombs);
     window.display();
 }
 
@@ -94,4 +102,30 @@ void BoardGui::alert(std::string text, bool& game)
         }
         game = false;
     }
+}
+
+void BoardGui::displayBombsCounter(sf::RenderWindow& window, int bombs)
+{
+    window.pushGLStates();
+
+    sf::Texture textBckg;
+    textBckg.loadFromFile("images/numBckg.jpg");
+    sf::Sprite sTextBckg(textBckg);
+    sTextBckg.setPosition(30, 30);
+    window.draw(sTextBckg);
+
+    sf::Font font;
+    if (!font.loadFromFile("fonts/calcFont.otf"))
+        std::cout << "Error loading font\n" ;
+    std::ostringstream ss;
+    ss << std::setfill('0') << std::setw(3) << bombs << std::endl;
+    sf::Text atext;
+    atext.setFont(font);
+    atext.setCharacterSize(95);
+    atext.setFillColor(sf::Color::Red);
+    atext.setPosition(33,16);
+    atext.setString(ss.str());
+
+    window.draw(atext);
+    window.popGLStates();
 }
