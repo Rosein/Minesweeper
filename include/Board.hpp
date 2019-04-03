@@ -21,5 +21,6 @@ public:
     int getVisibleFieldInfo(int x, int y);
     void setVisibleField(int x, int y, int val);
     void displayMultipleFields(int x, int y);
+    bool checkIfWon();
 };
     

@@ -6,6 +6,7 @@ BoardGui::BoardGui(Board& board)
     int tileSize = 50;
     auto fSize = board.getFieldSize();
     sf::RenderWindow window( sf::VideoMode( (fSize.first)*tileSize, (fSize.second+3)*tileSize), "Minsweeper" );
+    bool game = true;
 
 
     sf::Texture background;
@@ -17,7 +18,7 @@ BoardGui::BoardGui(Board& board)
     sf::Event e;
 
     displayField(window, fSize, board, tileSize, s);
-    while( window.isOpen() )
+    while( window.isOpen() && game )
     {
         while(window.pollEvent(e))
         {
@@ -39,12 +40,15 @@ BoardGui::BoardGui(Board& board)
                 if (e.mouseButton.button == sf::Mouse::Right) 
                 {
                     if(board.getVisibleFieldInfo(x, y) == 10)
-                        board.setVisibleField(x, y, 11);
-                    
+                        board.setVisibleField(x, y, 11);               
                     else if(board.getVisibleFieldInfo(x, y) == 11)
                         board.setVisibleField(x, y, 10);
                 }
             displayField(window, fSize, board, tileSize, s);       
+            if(board.getVisibleFieldInfo(x, y) == 9)
+                alert("You lost!", game);
+            else if(board.checkIfWon())
+                alert("You won!", game);
             }          
         } 
     }
@@ -61,4 +65,33 @@ void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize,
             s.setPosition((i-1)*tileSize, (j+2)*tileSize);
             window.draw(s);
         }
-    window.display();}
+    window.display();
+}
+
+void BoardGui::alert(std::string text, bool& game)
+{
+    sf::RenderWindow alrt(sf::VideoMode(200, 200), text);
+    while (alrt.isOpen())
+    {
+        sf::Texture t;
+        if(text == "You won!")
+            t.loadFromFile("images/youWon.jpg");
+        else if(text == "You lost!")
+            t.loadFromFile("images/youLost.jpg");
+        sf::Sprite s(t);
+
+        while (alrt.isOpen())
+        {
+            alrt.clear(sf::Color::White);
+            alrt.draw(s);
+            sf::Event e;
+            while (alrt.pollEvent(e))
+            {
+                if (e.type == sf::Event::Closed)
+                    alrt.close();
+            }
+            alrt.display();
+        }
+        game = false;
+    }
+}

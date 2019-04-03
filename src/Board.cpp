@@ -93,3 +93,13 @@ void Board::showSurroundingOfEmptyField(std::vector<std::pair<int, int>>& emptyF
         _visibleBoard[x][y] = _board[x][y];
     }
 }
+
+bool Board::checkIfWon()
+{
+    for(int i=1; i<=_x; i++)
+        for(int j=1; j<=_y; j++)
+            if(_board[i][j] !=9)
+                if(_board[i][j] != _visibleBoard[i][j])
+                    return false;
+    return true;
+}
