@@ -6,7 +6,7 @@
 int main(int argc, char* argv[])
 {
     srand(time(0));
-    Board myBoard(10, 8);
+    Board myBoard(10, 12);
     BoardGui game(myBoard);
     return 0;
 }

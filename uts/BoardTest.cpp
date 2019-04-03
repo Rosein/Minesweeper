@@ -67,10 +67,15 @@ TEST_F(BoardTest, displayMultipleFieldsDisplaysThem)
 TEST_F(BoardTest, checkIfWon)
 {
     Board board2{3,3};
-    EXPECT_EQ(false, board2.checkIfWon());
+    EXPECT_FALSE(board2.checkIfWon());
     for(int i=1; i<=3; i++)
         for(int j=1; j<=3; j++)
             if(board2.getFieldInfo(i, j) != 9)
                 board2.setVisibleField(i, j, board2.getFieldInfo(i, j));
-    EXPECT_EQ(true, board2.checkIfWon());
+    EXPECT_TRUE(board2.checkIfWon());
+}
+
+TEST_F(BoardTest, checkNoOfBombsExpect19)
+{
+    EXPECT_EQ(19, board.getNoOfBombs());
 }

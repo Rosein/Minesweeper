@@ -3,29 +3,29 @@
 
 BoardGui::BoardGui(Board& board)
 {
+    Timer timer;
     int tileSize = 50;
     auto fSize = board.getFieldSize();
-    sf::RenderWindow window( sf::VideoMode( (fSize.first)*tileSize, (fSize.second+3)*tileSize), "Minesweeper" );
+    int windowWidth = (fSize.first)*tileSize;
+    int windowHeight = (fSize.second+3)*tileSize;
+    sf::RenderWindow window( sf::VideoMode( windowWidth, windowHeight), "Minesweeper" );
+    window.setFramerateLimit(10);
     bool game = true;
     int bombs = board.getNoOfBombs();
 
-
-    sf::Texture background;
-    background.loadFromFile("images/background.jpg");
-    sf::Sprite sBackground(background);
     sf::Texture t;
     t.loadFromFile("images/tiles.jpg");
     sf::Sprite s(t);
     sf::Event e;
-
-    displayField(window, fSize, board, tileSize, s, bombs);
+    displayField(window, fSize, board, tileSize, s, bombs, windowWidth, timer);
     while( window.isOpen() && game )
     {
+        sf::Vector2i pos = sf::Mouse::getPosition(window);
+        int x = pos.x/tileSize +1;
+        int y = pos.y/tileSize -2;
         while(window.pollEvent(e))
         {
-            sf::Vector2i pos = sf::Mouse::getPosition(window);
-            int x = pos.x/tileSize +1;
-            int y = pos.y/tileSize -2;
+            
             if (e.type == sf::Event::Closed)
                 window.close();
 
@@ -51,18 +51,18 @@ BoardGui::BoardGui(Board& board)
                         bombs++;
                     }
                 }
-            displayField(window, fSize, board, tileSize, s, bombs);       
-            if(board.getVisibleFieldInfo(x, y) == 9)
-                alert("You lost!", game);
-            else if(board.checkIfWon())
-                alert("You won!", game);
             }          
         } 
+        displayField(window, fSize, board, tileSize, s, bombs, windowWidth, timer);       
+        if(board.getVisibleFieldInfo(x, y) == 9)
+            alert("You lost!", game);
+        else if(board.checkIfWon())
+            alert("You won!", game);
     }
 
 }
 
-void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s, int bombs)
+void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s, int bombs, int windowWidth, Timer& timer)
 {
     window.clear(sf::Color(192, 192, 192, 255));
     for (int i=1; i<=fSize.first; i++)
@@ -72,60 +72,67 @@ void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize,
             s.setPosition((i-1)*tileSize, (j+2)*tileSize);
             window.draw(s);
         }
-    displayBombsCounter(window, bombs);
+    displayBombsCounter(window, bombs, windowWidth, timer);
     window.display();
 }
 
 void BoardGui::alert(std::string text, bool& game)
 {
     sf::RenderWindow alrt(sf::VideoMode(200, 200), text);
+    alrt.setFramerateLimit(1);
+    sf::Texture t;
+    if(text == "You won!")
+        t.loadFromFile("images/youWon.jpg");
+    else if(text == "You lost!")
+        t.loadFromFile("images/youLost.jpg");
+    sf::Sprite s(t);
+    alrt.clear(sf::Color::White);
+    alrt.draw(s);
+    sf::Event e;
+    alrt.display();
     while (alrt.isOpen())
     {
-        sf::Texture t;
-        if(text == "You won!")
-            t.loadFromFile("images/youWon.jpg");
-        else if(text == "You lost!")
-            t.loadFromFile("images/youLost.jpg");
-        sf::Sprite s(t);
-
-        while (alrt.isOpen())
-        {
-            alrt.clear(sf::Color::White);
-            alrt.draw(s);
-            sf::Event e;
-            while (alrt.pollEvent(e))
-            {
-                if (e.type == sf::Event::Closed)
-                    alrt.close();
-            }
-            alrt.display();
-        }
-        game = false;
+        alrt.pollEvent(e);
+        if (e.type == sf::Event::Closed)
+            alrt.close();     
     }
+    game = false;
 }
 
-void BoardGui::displayBombsCounter(sf::RenderWindow& window, int bombs)
+void BoardGui::displayBombsCounter(sf::RenderWindow& window, int bombs, int windowWidth, Timer& timer)
 {
     window.pushGLStates();
 
     sf::Texture textBckg;
     textBckg.loadFromFile("images/numBckg.jpg");
     sf::Sprite sTextBckg(textBckg);
-    sTextBckg.setPosition(30, 30);
+    sTextBckg.setPosition(35, 35);
+    window.draw(sTextBckg);
+    sTextBckg.setPosition(windowWidth - 180, 35);
     window.draw(sTextBckg);
 
-    sf::Font font;
+        sf::Font font;
     if (!font.loadFromFile("fonts/calcFont.otf"))
         std::cout << "Error loading font\n" ;
-    std::ostringstream ss;
-    ss << std::setfill('0') << std::setw(3) << bombs << std::endl;
-    sf::Text atext;
-    atext.setFont(font);
-    atext.setCharacterSize(95);
-    atext.setFillColor(sf::Color::Red);
-    atext.setPosition(33,16);
-    atext.setString(ss.str());
+    std::ostringstream bombsCounter;
+    bombsCounter << std::setfill('0') << std::setw(3) << bombs << std::endl;
+    sf::Text bombsCounterText;
+    bombsCounterText.setFont(font);
+    bombsCounterText.setCharacterSize(78);
+    bombsCounterText.setFillColor(sf::Color::Red);
+    bombsCounterText.setPosition(40,25);
+    bombsCounterText.setString(bombsCounter.str());
 
-    window.draw(atext);
+    std::ostringstream timeCounter;
+    timeCounter << std::setfill('0') << std::setw(3) << timer.getTime() << std::endl;
+    sf::Text timeCounterText;
+    timeCounterText.setFont(font);
+    timeCounterText.setCharacterSize(78);
+    timeCounterText.setFillColor(sf::Color::Red);
+    timeCounterText.setPosition(windowWidth - 175, 25);
+    timeCounterText.setString(timeCounter.str());
+
+    window.draw(bombsCounterText);
+    window.draw(timeCounterText);
     window.popGLStates();
 }
