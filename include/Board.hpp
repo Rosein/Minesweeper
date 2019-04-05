@@ -17,12 +17,13 @@ class Board
     void findWholeSurroundingOfEmpty(int x, int y, std::vector<std::pair<int, int>>& emptyFields);
 public:
     Board(int width, int height);
-    std::pair <int, int> getFieldSize();
-    int getNoOfBombs();
-    int getFieldInfo(int x, int y);
-    int getVisibleFieldInfo(int x, int y);
+    std::pair <int, int> getFieldSize() const;
+    int getNoOfBombs() const;
+    int getFieldInfo(int x, int y) const;
+    int getVisibleFieldInfo(int x, int y) const;
     void setVisibleField(int x, int y, int val);
     void displayMultipleFields(int x, int y);
-    bool checkIfWon();
+    bool checkIfWon() const;
+    void boardReset();
 };
     

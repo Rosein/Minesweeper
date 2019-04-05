@@ -10,9 +10,9 @@
 
 class BoardGui
 {
-    void displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s, int bombs, int windowWidth, Timer& timer);
+    void displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s);
     void alert(std::string text, bool& game);
-    void displayBombsCounter(sf::RenderWindow& app, int bombs, int windowWidth, Timer& timer);
+    void displayTopPanel(sf::RenderWindow& app, int bombs, int windowWidth, Timer& timer, int& timeScore, bool game, sf::Sprite& sTextBckg, sf::Font& font);
 public:
     BoardGui(Board& board);
 };

@@ -1,13 +1,13 @@
 #pragma once
-#include <cstdio>
-#include <ctime>
 #include <iostream>
+#include <chrono>
 
 class Timer
 {
     int _duration;
-    std::clock_t _start;
+    std::chrono::_V2::system_clock::time_point _start;
 public:
     Timer();
     int getTime();
+    void restart();
 };

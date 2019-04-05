@@ -4,20 +4,20 @@
 Board::Board(int width, int height) : _y(height), _x(width)
 {
     _board.resize(_x+2);
-    for_each(begin(_board), end(_board), [&](std::vector<int> &v){v.resize(_y+2, 0);});
+    std::for_each(begin(_board), end(_board), [&](std::vector<int> &v){v.resize(_y+2, 0);});
     _visibleBoard.resize(_x+2);
-    for_each(begin(_visibleBoard), end(_visibleBoard), [&](std::vector<int> &v){v.resize(_y+2, 10);});
+    std::for_each(begin(_visibleBoard), end(_visibleBoard), [&](std::vector<int> &v){v.resize(_y+2, 10);});
     fillField();
 }
 
-int Board::getFieldInfo(int x, int y)
+int Board::getFieldInfo(int x, int y) const
 {
     if( ( x <= _x && x > 0 ) && ( y <= _y && y > 0 ) )
         return _board[x][y];
     else return -1;
 }
 
-int Board::getVisibleFieldInfo(int x, int y)
+int Board::getVisibleFieldInfo(int x, int y) const
 {
     if( ( x <= _x && x > 0 ) && ( y <= _y && y > 0 ) )
         return _visibleBoard[x][y];
@@ -29,12 +29,12 @@ int Board::getVisibleFieldInfo(int x, int y)
      _visibleBoard[x][y] = val;
  }
 
-std::pair <int, int>  Board::getFieldSize()
+std::pair <int, int>  Board::getFieldSize() const
 {
     return std::make_pair(_x, _y);
 }
 
-int Board::getNoOfBombs()
+int Board::getNoOfBombs() const
 {
     return _bombs;
 }
@@ -99,7 +99,7 @@ void Board::showSurroundingOfEmptyField(std::vector<std::pair<int, int>>& emptyF
     }
 }
 
-bool Board::checkIfWon()
+bool Board::checkIfWon() const
 {
     for(int i=1; i<=_x; i++)
         for(int j=1; j<=_y; j++)
@@ -107,4 +107,11 @@ bool Board::checkIfWon()
                 if(_board[i][j] != _visibleBoard[i][j])
                     return false;
     return true;
+}
+
+void Board::boardReset()
+{
+    std::for_each(begin(_board), end(_board), [&](std::vector<int> &v){ std::fill(v.begin(), v.end(), 0); });
+    std::for_each(begin(_visibleBoard), end(_visibleBoard), [&](std::vector<int> &v){ std::fill(v.begin(), v.end(), 10); });
+    fillField();
 }

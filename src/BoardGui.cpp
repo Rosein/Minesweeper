@@ -4,6 +4,7 @@
 BoardGui::BoardGui(Board& board)
 {
     Timer timer;
+    int timeScore;
     int tileSize = 50;
     auto fSize = board.getFieldSize();
     int windowWidth = (fSize.first)*tileSize;
@@ -16,13 +17,34 @@ BoardGui::BoardGui(Board& board)
     sf::Texture t;
     t.loadFromFile("images/tiles.jpg");
     sf::Sprite s(t);
+    sf::Texture tHeadN;
+    tHeadN.loadFromFile("images/youPlay.jpg");
+    sf::Sprite sHeadN(tHeadN);
+    sHeadN.setPosition(windowWidth/2-60, 15);
+    sf::Texture tHeadL;
+    tHeadL.loadFromFile("images/youLost.jpg");
+    sf::Sprite sHeadL(tHeadL);
+    sHeadL.setPosition(windowWidth/2-60, 15);
+    sf::Texture tHeadW;
+    tHeadW.loadFromFile("images/youWon.jpg");
+    sf::Sprite sHeadW(tHeadW);
+    sHeadW.setPosition(windowWidth/2-60, 15);
+    sf::Texture textBckg;
+    textBckg.loadFromFile("images/numBckg.jpg");
+    sf::Sprite sTextBckg(textBckg);
+    sf::Font font;
+    if (!font.loadFromFile("fonts/calcFont.otf"))
+        std::cout << "Error loading font\n" ;
+
     sf::Event e;
-    displayField(window, fSize, board, tileSize, s, bombs, windowWidth, timer);
-    while( window.isOpen() && game )
+    while( window.isOpen())
     {
+        window.clear(sf::Color(192, 192, 192, 255));
         sf::Vector2i pos = sf::Mouse::getPosition(window);
+        sf::Vector2f mousePosF( static_cast<float>( pos.x ), static_cast<float>( pos.y ) );
         int x = pos.x/tileSize +1;
         int y = pos.y/tileSize -2;
+        
         while(window.pollEvent(e))
         {
             
@@ -32,39 +54,60 @@ BoardGui::BoardGui(Board& board)
             if (e.type == sf::Event::MouseButtonPressed)
             {
                 if (e.mouseButton.button == sf::Mouse::Left)
-                {
-                    if(board.getFieldInfo(x, y) != 0 && board.getVisibleFieldInfo(x, y) != 11)
-                        board.setVisibleField(x, y, board.getFieldInfo(x, y));
-                    else if(board.getFieldInfo(x, y) == 0 && board.getVisibleFieldInfo(x, y) != 11)
-                        board.displayMultipleFields(x, y);       
-                } 
-                if (e.mouseButton.button == sf::Mouse::Right) 
-                {
-                    if(board.getVisibleFieldInfo(x, y) == 10)
+                    if (sHeadN.getGlobalBounds().contains(mousePosF))
                     {
-                        board.setVisibleField(x, y, 11);               
-                        bombs--;
+                        board.boardReset();
+                        bombs = board.getNoOfBombs();
+                        timer.restart();
+                        game = true;
                     }
-                    else if(board.getVisibleFieldInfo(x, y) == 11)
+                
+                if(game && y > 0)
+                {
+                    if (e.mouseButton.button == sf::Mouse::Left)
                     {
-                        board.setVisibleField(x, y, 10);
-                        bombs++;
+                        if(board.getFieldInfo(x, y) != 0 && board.getVisibleFieldInfo(x, y) != 11)
+                            board.setVisibleField(x, y, board.getFieldInfo(x, y));
+                        else if(board.getFieldInfo(x, y) == 0 && board.getVisibleFieldInfo(x, y) != 11)
+                            board.displayMultipleFields(x, y);       
+                    } 
+                    if (e.mouseButton.button == sf::Mouse::Right) 
+                    {
+                        if(board.getVisibleFieldInfo(x, y) == 10)
+                        {
+                            board.setVisibleField(x, y, 11);               
+                            bombs--;
+                        }
+                        else if(board.getVisibleFieldInfo(x, y) == 11)
+                        {
+                            board.setVisibleField(x, y, 10);
+                            bombs++;
+                        }
                     }
                 }
             }          
         } 
-        displayField(window, fSize, board, tileSize, s, bombs, windowWidth, timer);       
-        if(board.getVisibleFieldInfo(x, y) == 9)
-            alert("You lost!", game);
-        else if(board.checkIfWon())
-            alert("You won!", game);
-    }
+        window.draw(sHeadN);
+        if(board.getVisibleFieldInfo(x, y) == 9 || !game)
+        {
+            window.draw(sHeadL);
+            game = false;
+        }
+        if(board.checkIfWon())
+        {
+            window.draw(sHeadW);
+            game = false;
+        }
 
+        displayField(window, fSize, board, tileSize, s);  
+        displayTopPanel(window, bombs, windowWidth, timer, timeScore, game, sTextBckg, font);
+        window.display();     
+    }
 }
 
-void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s, int bombs, int windowWidth, Timer& timer)
-{
-    window.clear(sf::Color(192, 192, 192, 255));
+
+void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize, Board& board, int tileSize, sf::Sprite s)
+{  
     for (int i=1; i<=fSize.first; i++)
         for (int j=1; j<=fSize.second; j++)
         {
@@ -72,48 +115,19 @@ void BoardGui::displayField(sf::RenderWindow& window, std::pair<int, int> fSize,
             s.setPosition((i-1)*tileSize, (j+2)*tileSize);
             window.draw(s);
         }
-    displayBombsCounter(window, bombs, windowWidth, timer);
-    window.display();
 }
 
-void BoardGui::alert(std::string text, bool& game)
-{
-    sf::RenderWindow alrt(sf::VideoMode(200, 200), text);
-    alrt.setFramerateLimit(1);
-    sf::Texture t;
-    if(text == "You won!")
-        t.loadFromFile("images/youWon.jpg");
-    else if(text == "You lost!")
-        t.loadFromFile("images/youLost.jpg");
-    sf::Sprite s(t);
-    alrt.clear(sf::Color::White);
-    alrt.draw(s);
-    sf::Event e;
-    alrt.display();
-    while (alrt.isOpen())
-    {
-        alrt.pollEvent(e);
-        if (e.type == sf::Event::Closed)
-            alrt.close();     
-    }
-    game = false;
-}
 
-void BoardGui::displayBombsCounter(sf::RenderWindow& window, int bombs, int windowWidth, Timer& timer)
+void BoardGui::displayTopPanel(sf::RenderWindow& window, int bombs, int windowWidth, Timer& timer, int& timeScore, bool game, sf::Sprite& sTextBckg, sf::Font& font)
 {
     window.pushGLStates();
 
-    sf::Texture textBckg;
-    textBckg.loadFromFile("images/numBckg.jpg");
-    sf::Sprite sTextBckg(textBckg);
+    
     sTextBckg.setPosition(35, 35);
     window.draw(sTextBckg);
     sTextBckg.setPosition(windowWidth - 180, 35);
     window.draw(sTextBckg);
 
-        sf::Font font;
-    if (!font.loadFromFile("fonts/calcFont.otf"))
-        std::cout << "Error loading font\n" ;
     std::ostringstream bombsCounter;
     bombsCounter << std::setfill('0') << std::setw(3) << bombs << std::endl;
     sf::Text bombsCounterText;
@@ -124,7 +138,11 @@ void BoardGui::displayBombsCounter(sf::RenderWindow& window, int bombs, int wind
     bombsCounterText.setString(bombsCounter.str());
 
     std::ostringstream timeCounter;
-    timeCounter << std::setfill('0') << std::setw(3) << timer.getTime() << std::endl;
+    if(game)
+    {
+        timeScore = timer.getTime();
+    }
+    timeCounter << std::setfill('0') << std::setw(3) << timeScore << std::endl;
     sf::Text timeCounterText;
     timeCounterText.setFont(font);
     timeCounterText.setCharacterSize(78);
