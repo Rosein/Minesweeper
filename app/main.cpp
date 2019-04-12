@@ -3,7 +3,7 @@
 
 int main()
 {
-	Minesweeper::Game(10*TILE_SIZE, 13*TILE_SIZE, "Minesweeper");
+	Minesweeper::Game(10*TILE_SIZE, (10+3)*TILE_SIZE, "Minesweeper");
 
 	return 0;
 }

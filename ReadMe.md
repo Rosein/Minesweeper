@@ -19,9 +19,9 @@ Game was created using TDD development process.
 - [x] when all fields apart of bombs are displayed - game is over and won
 - [x] display amount of bombs left to find
 - [x] add time counter
-- [ ] add background
-- [ ] add best scores list
+- [x] add best scores list
 - [x] make head icon like in original Minesweeper
+- [ ] add level choosing
 
 
 

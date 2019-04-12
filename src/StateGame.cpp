@@ -19,9 +19,9 @@ namespace Minesweeper
 		_bombsCounterText.setFont(_data->assets.LoadAndGetFont(CALCULATOR_FONT_FILEPATH));
 		_timeCounterText.setFont(_data->assets.LoadAndGetFont(CALCULATOR_FONT_FILEPATH));
 
-		_headN.setPosition(((_data->window).getSize().x / 2) -60, 15);
-		_headL.setPosition(((_data->window).getSize().x / 2) -60, 15);
-		_headW.setPosition(((_data->window).getSize().x / 2) -60, 15);
+		_headN.setPosition(((_data->window).getSize().x / 2) - _headN.getGlobalBounds().width/2, 15);
+		_headL.setPosition(((_data->window).getSize().x / 2) - _headL.getGlobalBounds().width/2, 15);
+		_headW.setPosition(((_data->window).getSize().x / 2) - _headW.getGlobalBounds().width/2, 15);
 		_textBckgPoints.setPosition(35, 35);
 		_textBckgTime  .setPosition((_data->window).getSize().x - 180, 35);
 		_bombsCounterText.setCharacterSize(78);
@@ -87,7 +87,11 @@ namespace Minesweeper
 	void StateGame::Update()
 	{
 		if(_board -> checkIfWon())
+		{
             _game = false;
+			BestScore b(_timeScore);
+			_data->machine.AddState(std::make_unique<StateBestScore>(_data, _timeScore), false);
+		}
 		_bombsCounter.str("");
 		_bombsCounter << std::setfill('0') << std::setw(3) << _bombs << std::endl;
 		_bombsCounterText.setString(_bombsCounter.str());

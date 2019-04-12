@@ -9,6 +9,8 @@
 #include "Game.hpp"
 #include "Board.hpp"
 #include "Timer.hpp"
+#include "StateBestScore.hpp"
+#include "BestScore.hpp"
 
 namespace Minesweeper
 {
