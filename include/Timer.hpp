@@ -2,12 +2,15 @@
 #include <iostream>
 #include <chrono>
 
-class Timer
+namespace Minesweeper
 {
-    int _duration;
-    std::chrono::_V2::system_clock::time_point _start;
-public:
-    Timer();
-    int getTime();
-    void restart();
-};
+    class Timer
+    {
+        int _duration;
+        std::chrono::_V2::system_clock::time_point _start;
+    public:
+        Timer();
+        int getTime();
+        void restart();
+    };
+}

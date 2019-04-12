@@ -1,12 +1,9 @@
-#include "../include/Board.hpp"
-#include "../include/BoardGui.hpp"
+#include "../include/Game.hpp"
+#include "../include/DEFINITIONS.hpp"
 
-#include <iostream>
-
-int main(int argc, char* argv[])
+int main()
 {
-    srand(time(0));
-    Board myBoard(10, 10);
-    BoardGui game(myBoard);
-    return 0;
+	Minesweeper::Game(10*TILE_SIZE, 13*TILE_SIZE, "Minesweeper");
+
+	return 0;
 }
