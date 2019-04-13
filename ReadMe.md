@@ -51,6 +51,6 @@ Game was created using TDD development process.
 <br>When you won:<br>
   <img src="https://user-images.githubusercontent.com/25400249/56082956-5421a900-5e1f-11e9-85d9-05e8724884fa.png" width="300"/>
 <br>And after you clicked OK:<br>
-  <img src="https://user-images.githubusercontent.com/25400249/55627798-58125300-57af-11e9-8c76-24a516bfaa22.png" width="500"/>
+  <img src="https://user-images.githubusercontent.com/25400249/55627799-58125300-57af-11e9-9d5f-544eb05d4769.png" width="500"/>
 
 </p>
