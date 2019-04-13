@@ -4,18 +4,19 @@
 #include <sstream>
 #include <iostream>
 #include "DEFINITIONS.hpp"
+#include "StateGame.hpp"
 #include "State.hpp"
 #include "Game.hpp"
-#include "Timer.hpp"
-#include "BestScore.hpp"
+#include "Level.hpp"
 
 namespace Minesweeper
 {
 	struct GameData;
-	class StateBestScore : public State
+
+	class StateMainMenu : public State
 	{
 	public:
-		StateBestScore(const std::shared_ptr<GameData>& data, int timeScore, BestScore bScore);
+		StateMainMenu(const std::shared_ptr<GameData>& data);
 
 		void Init() override;
 		void HandleInput() override;
@@ -24,10 +25,10 @@ namespace Minesweeper
 
 	private:
 		std::shared_ptr<GameData> _data;
-		sf::Text _bestScoreText;
-		std::ostringstream _bestScoreStream;
-		int _timeScore;
-		BestScore _bScore;
-		sf::Sprite _OK;
+
+		sf::Sprite _logo;
+		sf::Sprite _easyButton;
+		sf::Sprite _mediumButton;
+		sf::Sprite _hardButton;
 	};
 }

@@ -3,9 +3,20 @@
 
 namespace Minesweeper
 {
-	StateGame::StateGame(const std::shared_ptr<GameData>& data) : _data(data)
-	{
-		_board = std::make_shared<Board>(10, 10, 0.16);
+	StateGame::StateGame(const std::shared_ptr<GameData>& data, Level level) : _data(data), _level(level)
+	{	
+		switch(level)
+		{
+			case Level::EASY:
+				_board = std::make_shared<Board>(EASY_X, EASY_Y, EASY_BOMBS_RATIO);
+				break;
+			case Level::MEDIUM:
+				_board = std::make_shared<Board>(MEDIUM_X, MEDIUM_Y, MEDIUM_BOMBS_RATIO);
+				break;
+			case Level::HARD:
+				_board = std::make_shared<Board>(HARD_X, HARD_Y, HARD_BOMBS_RATIO);
+				break;
+		}
 	}
 
 	void StateGame::Init()
@@ -19,17 +30,17 @@ namespace Minesweeper
 		_bombsCounterText.setFont(_data->assets.LoadAndGetFont(CALCULATOR_FONT_FILEPATH));
 		_timeCounterText.setFont(_data->assets.LoadAndGetFont(CALCULATOR_FONT_FILEPATH));
 
-		_headN.setPosition(((_data->window).getSize().x / 2) - _headN.getGlobalBounds().width/2, 15);
-		_headL.setPosition(((_data->window).getSize().x / 2) - _headL.getGlobalBounds().width/2, 15);
-		_headW.setPosition(((_data->window).getSize().x / 2) - _headW.getGlobalBounds().width/2, 15);
-		_textBckgPoints.setPosition(35, 35);
-		_textBckgTime  .setPosition((_data->window).getSize().x - 180, 35);
-		_bombsCounterText.setCharacterSize(78);
-		_timeCounterText .setCharacterSize(78);
+		_headN.setPosition(((_data->window).getSize().x / 2) - _headN.getGlobalBounds().width/2, 10);
+		_headL.setPosition(((_data->window).getSize().x / 2) - _headL.getGlobalBounds().width/2, 10);
+		_headW.setPosition(((_data->window).getSize().x / 2) - _headW.getGlobalBounds().width/2, 10);
+		_textBckgPoints.setPosition(TILE_SIZE*0.7, TILE_SIZE*0.7);
+		_textBckgTime  .setPosition((_data->window).getSize().x - TILE_SIZE*3.5, TILE_SIZE*0.7);
+		_bombsCounterText.setCharacterSize(TILE_SIZE * 1.56);
+		_timeCounterText .setCharacterSize(TILE_SIZE * 1.56);
 		_bombsCounterText.setFillColor(sf::Color::Red);
 		_timeCounterText .setFillColor(sf::Color::Red);
-		_bombsCounterText.setPosition(40,25);
-		_timeCounterText .setPosition((_data->window).getSize().x - 175, 25);
+		_bombsCounterText.setPosition(TILE_SIZE*0.8,TILE_SIZE*0.5);
+		_timeCounterText .setPosition((_data->window).getSize().x - TILE_SIZE*3.4, TILE_SIZE*0.5);
 		_bombs = _board -> getNoOfBombs();	
 	}
 
@@ -86,11 +97,11 @@ namespace Minesweeper
 
 	void StateGame::Update()
 	{
-		if(_board -> checkIfWon())
+		if(_board -> checkIfWon() && _game == true)
 		{
             _game = false;
-			BestScore b(_timeScore);
-			_data->machine.AddState(std::make_unique<StateBestScore>(_data, _timeScore), false);
+			BestScore b(_timeScore, _level);
+			_data->machine.AddState(std::make_unique<StateBestScore>(_data, _timeScore, b), false);
 		}
 		_bombsCounter.str("");
 		_bombsCounter << std::setfill('0') << std::setw(3) << _bombs << std::endl;

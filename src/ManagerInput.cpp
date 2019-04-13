@@ -6,7 +6,8 @@ namespace Minesweeper
 	{
 		if (sf::Mouse::isButtonPressed(button))
 		{
-			sf::IntRect playButtonRect(object.getPosition().x, object.getPosition().y, object.getGlobalBounds().width, object.getGlobalBounds().height);
+			sf::IntRect playButtonRect(object.getPosition().x, object.getPosition().y, 
+									   object.getGlobalBounds().width, object.getGlobalBounds().height);
 
 			if (playButtonRect.contains(sf::Mouse::getPosition(window)))
 			{

@@ -1,46 +1,21 @@
 #include "../include/BestScore.hpp"
 
-BestScore::BestScore()
+BestScore::BestScore(const int score, Level level) : _level(level)
 {
-    init(); 
-}
-
-BestScore::BestScore(const int score)
-{
-    init();   
-    if (bestScore.size() < 5)
-    {
-        bestScore.push_back(score);
-        std::sort(begin(bestScore), end(bestScore));
-        changed = true;
-    }
-    else
-    {
-        for(int bScore : bestScore)
-            if(score < bScore)
-            {
-                bestScore.push_back(score);
-                std::sort(begin(bestScore), end(bestScore));
-                bestScore.pop_back();
-                changed = true;
-                break;
-            }
-    }
-    if(changed)
-    {
-        std::ofstream writeFile(BEST_SCORE_LIST_FILEPATH);
-        if (writeFile.is_open())
+    switch(_level)
         {
-            for (int bScore : bestScore)
-                writeFile << '\n' << bScore;
-            writeFile.close();
+            case Level::EASY:
+                _filepath = BEST_SCORE_EASY_LIST_FILEPATH;
+                break;
+            case Level::MEDIUM:
+                _filepath = BEST_SCORE_MEDIUM_LIST_FILEPATH;
+                break;
+            case Level::HARD:
+                _filepath = BEST_SCORE_HARD_LIST_FILEPATH;
+                break;
         }
-    }
-}
-
-void BestScore::init()
-{
-    std::ifstream readFile(BEST_SCORE_LIST_FILEPATH);
+    
+    std::ifstream readFile(_filepath);
     if (readFile.is_open() )
     {
         bool empty = (readFile.get(), readFile.eof() );
@@ -50,14 +25,41 @@ void BestScore::init()
                 int i;
                 readFile >> i;
                 if(i!=0)
-                    bestScore.push_back(i);
+                    _bestScore.push_back(i);
             }
         readFile.close();
+    }  
+    if (_bestScore.size() < 5)
+    {
+        _bestScore.push_back(score);
+        std::sort(begin(_bestScore), end(_bestScore));
+        _changed = true;
+    }
+    else
+    {
+        for(int bScore : _bestScore)
+            if(score < bScore)
+            {
+                _bestScore.push_back(score);
+                std::sort(begin(_bestScore), end(_bestScore));
+                _bestScore.pop_back();
+                _changed = true;
+                break;
+            }
+    }
+    if(_changed)
+    {
+        std::ofstream writeFile(_filepath);
+        if (writeFile.is_open())
+        {
+            for (int bScore : _bestScore)
+                writeFile << '\n' << bScore;
+            writeFile.close();
+        }
     }
 }
 
-
 std::vector<int> BestScore::getBestScores()
 {
-    return bestScore;
+    return _bestScore;
 }

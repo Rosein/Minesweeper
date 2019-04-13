@@ -11,6 +11,7 @@
 #include "Timer.hpp"
 #include "StateBestScore.hpp"
 #include "BestScore.hpp"
+#include "Level.hpp"
 
 namespace Minesweeper
 {
@@ -18,7 +19,7 @@ namespace Minesweeper
 	class StateGame : public State
 	{
 	public:
-		StateGame(const std::shared_ptr<GameData>& data);
+		StateGame(const std::shared_ptr<GameData>& data, Level level);
 
 		void Init() override;
 		void HandleInput() override;
@@ -29,6 +30,7 @@ namespace Minesweeper
 		std::shared_ptr<GameData> _data;
 		std::shared_ptr<Board> _board;
 		Timer _timer;
+		Level _level;
 		int _bombs;
 		int _timeScore;
 		bool _game = true;

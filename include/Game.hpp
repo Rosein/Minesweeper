@@ -6,7 +6,7 @@
 #include "MachineOfStates.hpp"
 #include "ManagerAssets.hpp"
 #include "ManagerInput.hpp"
-#include "StateGame.hpp"
+#include "StateMainMenu.hpp"
 
 namespace Minesweeper
 {
