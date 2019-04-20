@@ -12,28 +12,29 @@ namespace Minesweeper
         fillField();
     }
 
-    int Board::getFieldInfo(int x, int y) const
+    int Board::getFieldInfo(Point p) const
     {
-        if( ( x <= _x && x > 0 ) && ( y <= _y && y > 0 ) )
-            return _board[x][y];
+        if( ( p.x <= _x && p.x > 0 ) && ( p.y <= _y && p.y > 0 ) )
+            return _board[p.x][p.y];
         else return -1;
     }
 
-    int Board::getVisibleFieldInfo(int x, int y) const
+    int Board::getVisibleFieldInfo(Point p) const
     {
-        if( ( x <= _x && x > 0 ) && ( y <= _y && y > 0 ) )
-            return _visibleBoard[x][y];
+        if( ( p.x <= _x && p.x > 0 ) && ( p.y <= _y && p.y > 0 ) )
+            return _visibleBoard[p.x][p.y];
         else return -1;
     }
 
-    void Board::setVisibleField(int x, int y, int val)
+    void Board::setVisibleField(Point p, int val)
     {
-        _visibleBoard[x][y] = val;
+        _visibleBoard[p.x][p.y] = val;
     }
 
-    std::pair <int, int>  Board::getFieldSize() const
+    BSize Board::getFieldSize() const
     {
-        return std::make_pair(_x, _y);
+        BSize boardSize = {_x, _y};
+        return boardSize;
     }
 
     int Board::getNoOfBombs() const
@@ -54,49 +55,53 @@ namespace Minesweeper
         }
         for(int i=1; i<=_x; i++)
             for(int j=1; j<=_y; j++)
-                _board[i][j] = numberFields(i, j);
+            {
+                Point p = {i, j};
+                _board[i][j] = numberFields(p);
+            }
     }
 
-    int Board::numberFields(int x, int y)
+    int Board::numberFields(Point p)
     {
-        if(_board[x][y] == 9) return 9;
+        if(_board[p.x][p.y] == 9) return 9;
         int count = 0;
-        for(int i = x-1; i<=x+1; i++)
-            for(int j = y-1; j<=y+1; j++)
+        for(int i = p.x-1; i<=p.x+1; i++)
+            for(int j = p.y-1; j<=p.y+1; j++)
                 if (_board[i][j] == 9)
                     count++;
         return count;
     }
 
-    void Board::displayMultipleFields(int x, int y)
+    void Board::displayMultipleFields(Point p)
     {
-        std::vector<std::pair<int, int>> emptyFields;
-        findWholeSurroundingOfEmpty(x, y, emptyFields);
+        std::vector<Point> emptyFields;
+        findWholeSurroundingOfEmpty(p, emptyFields);
         showSurroundingOfEmptyField(emptyFields);
     }
 
-    void Board::findWholeSurroundingOfEmpty(int x, int y, std::vector<std::pair<int, int>>& emptyFields)
+    void Board::findWholeSurroundingOfEmpty(Point p, std::vector<Point>& emptyFields)
     {
-        if( ( x <= _x && x > 0 ) && ( y <= _y && y > 0 ) )
-            for(int i = x-1; i<=x+1; i++)
-                for(int j = y-1; j<=y+1; j++)
+        if( ( p.x <= _x && p.x > 0 ) && ( p.y <= _y && p.y > 0 ) )
+            for(int i = p.x-1; i<=p.x+1; i++)
+                for(int j = p.y-1; j<=p.y+1; j++)
                 {
-                    auto it = std::find (begin(emptyFields), end(emptyFields), std::make_pair(i, j));
+                    Point pt = {i, j};
+                    auto it = std::find (begin(emptyFields), end(emptyFields), pt);
                     if(it == end(emptyFields))
                     {
-                        emptyFields.push_back(std::make_pair(i, j)); 
+                        emptyFields.push_back(pt); 
                         if(_board[i][j] == 0)
-                            findWholeSurroundingOfEmpty(i, j, emptyFields);
+                            findWholeSurroundingOfEmpty(pt, emptyFields);
                     }
                 }
     }
 
-    void Board::showSurroundingOfEmptyField(std::vector<std::pair<int, int>>& emptyFields)
+    void Board::showSurroundingOfEmptyField(std::vector<Point>& emptyFields)
     {
         for(auto elem : emptyFields)
         {
-            int x = elem.first;
-            int y = elem.second;
+            int x = elem.x;
+            int y = elem.y;
             _visibleBoard[x][y] = _board[x][y];
         }
     }

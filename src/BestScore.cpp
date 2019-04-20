@@ -1,5 +1,7 @@
 #include "../include/BestScore.hpp"
 
+namespace Minesweeper
+{
 BestScore::BestScore(const int score, Level level) : _level(level)
 {
     switch(_level)
@@ -62,4 +64,5 @@ BestScore::BestScore(const int score, Level level) : _level(level)
 std::vector<int> BestScore::getBestScores()
 {
     return _bestScore;
+}
 }

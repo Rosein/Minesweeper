@@ -67,27 +67,28 @@ namespace Minesweeper
                 
 			if(event.type == sf::Event::MouseButtonPressed && y > 0 && _game == true)
 			{
+				Point p = {x, y};
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{					
-					if(_board -> getFieldInfo(x, y) != 0 && _board -> getVisibleFieldInfo(x, y) != 11)
+					if(_board -> getFieldInfo(p) != 0 && _board -> getVisibleFieldInfo(p) != 11)
 					{
-						_board -> setVisibleField(x, y, _board -> getFieldInfo(x, y));
-						if(_board -> getFieldInfo(x, y) == 9)
+						_board -> setVisibleField(p, _board -> getFieldInfo(p));
+						if(_board -> getFieldInfo(p) == 9)
 							_game = false;
 					}
-					else if(_board -> getFieldInfo(x, y) == 0 && _board -> getVisibleFieldInfo(x, y) != 11)
-						_board -> displayMultipleFields(x, y);       
+					else if(_board -> getFieldInfo(p) == 0 && _board -> getVisibleFieldInfo(p) != 11)
+						_board -> displayMultipleFields(p);       
 				} 
 				if (event.mouseButton.button == sf::Mouse::Right) 
 				{
-					if(_board -> getVisibleFieldInfo(x, y) == 10)
+					if(_board -> getVisibleFieldInfo(p) == 10)
 					{
-						_board -> setVisibleField(x, y, 11);               
+						_board -> setVisibleField(p, 11);               
 						_bombs--;
 					}
-					else if(_board -> getVisibleFieldInfo(x, y) == 11)
+					else if(_board -> getVisibleFieldInfo(p) == 11)
 					{
-						_board -> setVisibleField(x, y, 10);
+						_board -> setVisibleField(p, 10);
 						_bombs++;
 					}
 				}
@@ -124,10 +125,11 @@ namespace Minesweeper
 		_data->window.draw(_bombsCounterText);
 		_data->window.draw(_timeCounterText);
 
-		for (int i = 1; i <= _board -> getFieldSize().first; i++)
-			for (int j = 1; j <= _board -> getFieldSize().second; j++)
+		for (int i = 1; i <= _board -> getFieldSize().width; i++)
+			for (int j = 1; j <= _board -> getFieldSize().height; j++)
 			{
-				_tiles.setTextureRect(sf::IntRect(_board -> getVisibleFieldInfo(i, j)*TILE_SIZE, 0, TILE_SIZE, TILE_SIZE));
+				Point p = {i, j};
+				_tiles.setTextureRect(sf::IntRect(_board -> getVisibleFieldInfo(p)*TILE_SIZE, 0, TILE_SIZE, TILE_SIZE));
 				_tiles.setPosition((i-1)*TILE_SIZE, (j+2)*TILE_SIZE);
 				_data->window.draw(_tiles);
 			}

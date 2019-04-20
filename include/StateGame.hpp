@@ -12,6 +12,7 @@
 #include "StateBestScore.hpp"
 #include "BestScore.hpp"
 #include "Level.hpp"
+#include "Point.hpp"
 
 namespace Minesweeper
 {
